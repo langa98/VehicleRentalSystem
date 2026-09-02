@@ -209,11 +209,10 @@ BEGIN
             REFERENCES Rental.Customer(CustomerID),
 
         CONSTRAINT CK_User_Role
-			CHECK ([Role] IN ('Admin', 'Customer'))
+			CHECK ([Role] IN ('Admin', 'Staff', 'Customer'))
     );
 END;
 GO
-
 
 SELECT
     s.name AS SchemaName,
