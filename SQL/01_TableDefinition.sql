@@ -37,11 +37,16 @@ BEGIN
 
         LastName NVARCHAR(50) NOT NULL,
 
+		IDNumber CHAR(13) NOT NULL UNIQUE,
+
         PhoneNumber NVARCHAR(20),
 
         Email NVARCHAR(100) UNIQUE NOT NULL,
 
-        DriversLicenseNo NVARCHAR(30)
+        DriversLicenseNo NVARCHAR(30) UNIQUE,
+
+		CONSTRAINT CK_Customer_IDNumber_Digits
+        CHECK (IDNumber NOT LIKE '%[^0-9]%')
     );
 
 END;
@@ -70,7 +75,6 @@ BEGIN
 END;
 GO
 
-
 IF NOT EXISTS (
     SELECT *
     FROM sys.tables t
@@ -98,7 +102,10 @@ BEGIN
         CategoryID INT NOT NULL,
 
         FOREIGN KEY (CategoryID)
-            REFERENCES Rental.VehicleCategory(CategoryID)
+            REFERENCES Rental.VehicleCategory(CategoryID),
+
+		CONSTRAINT CK_Vehicle_Status
+			CHECK ([Status] IN ('Available', 'Rented', 'Maintenance'))
     );
 
 END;
@@ -134,12 +141,14 @@ BEGIN
         FOREIGN KEY (VehicleID)
             REFERENCES Rental.Vehicle(VehicleID),
 
-        CHECK (EndDate >= StartDate)
+        CHECK (EndDate >= StartDate),
+
+		CONSTRAINT CK_Booking_Status
+			CHECK (BookingStatus IN ('Pending', 'Confirmed', 'Completed', 'Cancelled'))
     );
 
 END;
 GO
-
 
 IF NOT EXISTS (
     SELECT *
@@ -165,9 +174,11 @@ BEGIN
         BookingID INT NOT NULL,
 
         FOREIGN KEY (BookingID)
-            REFERENCES Rental.Booking(BookingID)
-    );
+            REFERENCES Rental.Booking(BookingID),
 
+		CONSTRAINT CK_Payment_Method
+			CHECK (PaymentMethod IN ('Cash', 'Card', 'EFT'))
+ );
 END;
 GO
 
@@ -197,7 +208,8 @@ BEGIN
         FOREIGN KEY (CustomerID)
             REFERENCES Rental.Customer(CustomerID),
 
-        CHECK ([Role] IN ('Admin', 'Customer'))
+        CONSTRAINT CK_User_Role
+			CHECK ([Role] IN ('Admin', 'Customer'))
     );
 END;
 GO
