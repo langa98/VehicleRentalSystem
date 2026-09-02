@@ -1,120 +1,214 @@
-/*CREATE DATABASE VehicleRental;
+
+IF DB_ID('VehicleRental') IS NULL
+BEGIN
+    CREATE DATABASE VehicleRental;
+END;
 GO
-*/
 
 USE VehicleRental;
 GO
 
 IF NOT EXISTS (
     SELECT *
-    FROM sys.tables
-    WHERE name = 'Customer'
+    FROM sys.schemas
+    WHERE name = 'Rental'
 )
 BEGIN
-CREATE TABLE Customer(
-	CustomerID INT IDENTITY(1,1) PRIMARY KEY,
-	FirtName NVARCHAR(50) NOT NULL,
-	LastName NVARCHAR(50)NOT NULL,
-	PhoneNumber NVARCHAR(20) ,
-	Email NVARCHAR(50) UNIQUE NOT NULL,
-	DriversLicenseNo NVARCHAR(30)
-);
+    EXEC('CREATE SCHEMA Rental');
 END;
 GO
 
 
 IF NOT EXISTS (
     SELECT *
-    FROM sys.tables
-    WHERE name = 'VehicleCategory'
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_id
+    WHERE t.name = 'Customer'
+      AND s.name = 'Rental'
 )
 BEGIN
-CREATE TABLE VehicleCategory(
-	CategoryID INT IDENTITY(1,1) PRIMARY KEY,
-	CategoryName NVARCHAR(50) NOT NULL,
-	DailyRate DECIMAL(10,2) NOT NULL CHECK (DailyRate>0)
-);
+
+    CREATE TABLE Rental.Customer
+    (
+        CustomerID INT IDENTITY(1,1) PRIMARY KEY,
+
+        FirstName NVARCHAR(50) NOT NULL,
+
+        LastName NVARCHAR(50) NOT NULL,
+
+        PhoneNumber NVARCHAR(20),
+
+        Email NVARCHAR(100) UNIQUE NOT NULL,
+
+        DriversLicenseNo NVARCHAR(30)
+    );
+
 END;
 GO
 
 IF NOT EXISTS (
     SELECT *
-    FROM sys.tables
-    WHERE name = 'Vehicle'
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_id
+    WHERE t.name = 'VehicleCategory'
+      AND s.name = 'Rental'
 )
 BEGIN
-CREATE TABLE Vehicle(
-	VehicleID INT IDENTITY(1,1) PRIMARY KEY,
-	RegistrationNo NVARCHAR(20) UNIQUE NOT NULL,
-	Make NVARCHAR(20) NOT NULL,
-	Model NVARCHAR(30) NOT NULL,
-	[Year]  INT NOT NULL,
-	[Status] NVARCHAR(20) NOT NULL,
-	CategoryID INT NOT NULL,
-	FOREIGN KEY (CategoryID) 
-		REFERENCES VehicleCategory(CategoryID)
-	
-);
+
+    CREATE TABLE Rental.VehicleCategory
+    (
+        CategoryID INT IDENTITY(1,1) PRIMARY KEY,
+
+        CategoryName NVARCHAR(50) NOT NULL UNIQUE,
+
+        DailyRate DECIMAL(10,2) NOT NULL
+            CHECK (DailyRate > 0)
+    );
+
+END;
+GO
+
+
+IF NOT EXISTS (
+    SELECT *
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_id
+    WHERE t.name = 'Vehicle'
+      AND s.name = 'Rental'
+)
+BEGIN
+
+    CREATE TABLE Rental.Vehicle
+    (
+        VehicleID INT IDENTITY(1,1) PRIMARY KEY,
+
+        RegistrationNo NVARCHAR(20) UNIQUE NOT NULL,
+
+        Make NVARCHAR(20) NOT NULL,
+
+        Model NVARCHAR(30) NOT NULL,
+
+        [Year] INT NOT NULL,
+
+        [Status] NVARCHAR(20) NOT NULL,
+
+        CategoryID INT NOT NULL,
+
+        FOREIGN KEY (CategoryID)
+            REFERENCES Rental.VehicleCategory(CategoryID)
+    );
+
 END;
 GO
 
 IF NOT EXISTS (
     SELECT *
-    FROM sys.tables
-    WHERE name = 'Booking'
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_id
+    WHERE t.name = 'Booking'
+      AND s.name = 'Rental'
 )
 BEGIN
-CREATE TABLE Booking(
-	BookingID INT IDENTITY(1,1) PRIMARY KEY,
-	StartDate DATE NOT NULL,
-	EndDate DATE NOT NULL,
-	BookingStatus VARCHAR(30) NOT NULL,
-	CustomerID INT NOT NULL,
-    VehicleID INT NOT NULL,
-	FOREIGN KEY(CustomerID)
-		REFERENCES Customer(CustomerID),
-	FOREIGN KEY(VehicleID)
-		REFERENCES Vehicle(VehicleID),
 
-		CHECK (EndDate >= StartDate)
-);
+    CREATE TABLE Rental.Booking
+    (
+        BookingID INT IDENTITY(1,1) PRIMARY KEY,
+
+        CustomerID INT NOT NULL,
+
+        VehicleID INT NOT NULL,
+
+        StartDate DATE NOT NULL,
+
+        EndDate DATE NOT NULL,
+
+        BookingStatus VARCHAR(30) NOT NULL,
+
+        FOREIGN KEY (CustomerID)
+            REFERENCES Rental.Customer(CustomerID),
+
+        FOREIGN KEY (VehicleID)
+            REFERENCES Rental.Vehicle(VehicleID),
+
+        CHECK (EndDate >= StartDate)
+    );
+
 END;
 GO
 
-IF NOT EXISTS (
-    SELECT *
-    FROM sys.tables
-    WHERE name = 'Payment'
-)
-BEGIN
-CREATE TABLE Payment(
-	PaymentID INT IDENTITY(1,1) PRIMARY KEY,
-	Amount DECIMAL(10,2) NOT NULL CHECK(Amount>0),
-	PaymentDate DATE NOT NULL,
-	PaymentMethod NVARCHAR(30) NOT NULL,
-	BookingID INT NOT NULL,
-	FOREIGN KEY(BookingID)
-		REFERENCES Booking(BookingID)
-);
-END;
-GO
 
 IF NOT EXISTS (
     SELECT *
-    FROM sys.tables
-    WHERE name = 'User'
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_id
+    WHERE t.name = 'Payment'
+      AND s.name = 'Rental'
 )
 BEGIN
-CREATE TABLE [User](
-	UserID INT IDENTITY(1,1) PRIMARY KEY,
-	UserName NVARCHAR(50) ,
-	PasswordHash NVARCHAR(100) NOT NULL,
-	[Role] VARCHAR(15) NOT NULL,
-	CustomerID INT NULL,
-	FOREIGN KEY(CustomerID)
-		REFERENCES Customer(CustomerID),
-		
-		CHECK ([Role] IN ('Admin', 'Customer'))
-);
+
+    CREATE TABLE Rental.Payment
+    (
+        PaymentID INT IDENTITY(1,1) PRIMARY KEY,
+
+        Amount DECIMAL(10,2) NOT NULL
+            CHECK (Amount > 0),
+
+        PaymentDate DATE NOT NULL,
+
+        PaymentMethod NVARCHAR(30) NOT NULL,
+
+        BookingID INT NOT NULL,
+
+        FOREIGN KEY (BookingID)
+            REFERENCES Rental.Booking(BookingID)
+    );
+
 END;
+GO
+
+
+IF NOT EXISTS (
+    SELECT *
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_id
+    WHERE t.name = 'User'
+      AND s.name = 'Rental'
+)
+BEGIN
+
+    CREATE TABLE Rental.[User]
+    (
+        UserID INT IDENTITY(1,1) PRIMARY KEY,
+
+        Username NVARCHAR(50) NOT NULL UNIQUE,
+
+        PasswordHash NVARCHAR(100) NOT NULL,
+
+        [Role] VARCHAR(15) NOT NULL,
+
+        CustomerID INT NULL,
+
+        FOREIGN KEY (CustomerID)
+            REFERENCES Rental.Customer(CustomerID),
+
+        CHECK ([Role] IN ('Admin', 'Customer'))
+    );
+END;
+GO
+
+
+SELECT
+    s.name AS SchemaName,
+    t.name AS TableName
+FROM sys.tables t
+INNER JOIN sys.schemas s
+    ON t.schema_id = s.schema_id
+WHERE s.name = 'Rental'
+ORDER BY t.name;
 GO
