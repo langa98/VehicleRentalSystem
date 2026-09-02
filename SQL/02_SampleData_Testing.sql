@@ -84,3 +84,85 @@ GO
 SELECT *
 FROM Rental.[User];
 GO
+
+/*
+--====================================
+--Testing the contraints
+--====================================
+
+TEST 1 - ID NUMBER (I DEFINED IT TO NOT CONTAINT A-Z)
+	INSERT INTO Rental.Customer
+		(FirstName, LastName, IDNumber, PhoneNumber, Email, DriversLicenseNo)
+	VALUES
+		('Test', 'Person', '90010150090AB', '0800000000',
+		'test@email.com', 'DL99999');
+
+THIS TEST WORKS, output im getting is:
+The INSERT statement conflicted with the CHECK constraint "CK_Customer_IDNumber_Digits".
+The conflict occurred in database "VehicleRental", table "Rental.Customer", column 'IDNumber'.'
+
+
+TEST 2 - Vehicle Status (should be either, 'Available', 'Rented', 'Maintenance' )
+
+	INSERT INTO Rental.Vehicle
+		(RegistrationNo, Make, Model, [Year], [Status], CategoryID)
+	VALUES
+		('TEST123', 'Toyota', 'Yaris', 2024, 'Broken', 1);
+THIS TEST WORKS, output im getting is:
+The INSERT statement conflicted with the CHECK constraint "CK_Vehicle_Status".
+The conflict occurred in database "VehicleRental", table "Rental.Vehicle", column 'Status'.
+
+
+TEST 3 - Booking Status
+Should be: Pending, Confirmed, Completed, or Cancelled
+
+	INSERT INTO Rental.Booking
+		(CustomerID, VehicleID, StartDate, EndDate, BookingStatus)
+	VALUES
+		(1, 1, '2026-10-01', '2026-10-05', 'Rejected');
+
+THIS TEST WORKS, output im getting is:
+	The INSERT statement conflicted with the CHECK constraint "CK_Booking_Status".
+	The conflict occurred in database "VehicleRental", table "Rental.Booking", column 'BookingStatus'.
+
+
+
+TEST 4 - Booking Dates
+EndDate should be equal to or later than StartDate
+
+	INSERT INTO Rental.Booking
+		(CustomerID, VehicleID, StartDate, EndDate, BookingStatus)
+	VALUES
+		(1, 1, '2026-10-10', '2026-10-05', 'Confirmed');
+
+THIS TEST WORKS, output im getting is:
+The INSERT statement conflicted with the CHECK constraint "CK__Booking__571DF1D5".
+The conflict occurred in database "VehicleRental", table "Rental.Booking"
+
+
+TEST 5 - Payment Method
+Should be: Cash, Card, or EFT
+
+	INSERT INTO Rental.Payment
+		(Amount, PaymentDate, PaymentMethod, BookingID)
+	VALUES
+		(1000.00, '2026-09-02', 'Cheque', 1);
+
+THIS TEST WORKS, output im getting is:
+The INSERT statement conflicted with the CHECK constraint "CK_Payment_Method".
+The conflict occurred in database "VehicleRental", table "Rental.Payment", column 'PaymentMethod'.
+
+
+TEST 6 - User Role
+Should be: Admin or Customer
+
+INSERT INTO Rental.[User]
+    (Username, PasswordHash, [Role], CustomerID)
+VALUES
+    ('testuser', 'HASH_TEST', 'Manager', NULL);
+
+THIS TEST WORKS, output im getting is:
+The INSERT statement conflicted with the CHECK constraint "CK_User_Role".
+The conflict occurred in database "VehicleRental", table "Rental.User", column 'Role'.
+
+*/
