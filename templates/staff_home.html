@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}{% block body %}
+<h1>Dashboard</h1><div class="grid">
+<div class="card stat"><b>{{ stats.available }}</b><span>Vehicles available</span></div>
+<div class="card stat"><b>{{ stats.rented }}</b><span>Vehicles rented</span></div>
+<div class="card stat"><b><a href="{{ url_for('staff_bookings', status='Pending') }}">{{ stats.pending }}</a></b><span>Pending bookings</span></div>
+{% if revenue is not none %}<div class="card stat"><b>{{ revenue|money }}</b><span>Total revenue (all payments received)</span></div>
+{% endif %}<div class="card stat"><b{% if overdue %} style="color:var(--err)"{% endif %}>{{ overdue|length }}</b><span>Overdue cars</span></div>
+</div>
+{% if overdue %}<div class="card tablewrap"><b>Overdue cars: phone these customers</b><p class="mute">These cars should already be back. They stay "Rented" until you click Mark returned. The late fee is one extra day's rate for each day late.</p>
+<table><tr><th>#</th><th>Customer</th><th>Phone</th><th>Car</th><th>Was due</th><th>Days late</th><th>Fee so far</th><th></th></tr>
+{% for o in overdue %}<tr><td>{{ o.BookingID }}</td><td>{{ o.FirstName }} {{ o.LastName }}</td><td>{{ o.PhoneNumber }}</td><td>{{ o.Make }} {{ o.Model }} <span class="mute">{{ o.RegistrationNo }}</span></td><td>{{ o.EndDate }}</td><td><span class="pill Overdue">{{ o.DaysLate }} day{{ 's' if o.DaysLate != 1 }}</span></td><td>{{ o.FeeSoFar|money }}</td>
+<td><form class="inline" method="post" action="{{ url_for('mark_returned', booking_id=o.BookingID) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn sm">Mark returned</button></form></td></tr>{% endfor %}</table></div>{% endif %}
+<div class="card"><b>Automation</b>
+<p class="mute">The site does this by itself every 5 minutes, and whenever a page opens: pending requests whose start date has passed are cancelled, approved bookings that were never paid are cancelled once their start date has passed, and every car's Available/Rented status is refreshed. A booking is only finished when staff click Mark returned, so a late car stays Rented and appears in the overdue list above. You can also run it right now.</p>
+<form method="post" action="{{ url_for('automation') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn">Run automation now</button></form></div>{% endblock %}

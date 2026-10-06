@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}My payments{% endblock %}{% block body %}
+<h1>My payments</h1><div class="card tablewrap"><table><tr><th>Payment</th><th>Booking</th><th>Date</th><th>Method</th><th>Amount</th></tr>
+{% for p in payments %}<tr><td>{{ p.PaymentID }}</td><td>#{{ p.BookingID }}</td><td>{{ p.PaymentDate }}</td><td>{{ p.PaymentMethod }}</td><td>{{ p.Amount|money }}</td></tr>
+{% else %}<tr><td colspan="5" class="mute">No payments yet.</td></tr>{% endfor %}</table></div>{% endblock %}

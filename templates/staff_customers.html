@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Customers{% endblock %}{% block body %}
+<h1>Customers</h1><div class="card tablewrap"><table><tr><th>#</th><th>Name</th><th>Phone</th><th>Email</th><th>Licence</th>{% if user.Role == 'Admin' %}<th></th>{% endif %}</tr>
+{% for c in customers %}<tr><td>{{ c.CustomerID }}</td><td>{{ c.FirstName }} {{ c.LastName }}{% if c.RentingNow %} <span class="pill Rented">Renting now</span>{% endif %}</td><td>{{ c.PhoneNumber or '' }}</td><td>{{ c.Email }}</td><td>{{ c.DriversLicenseNo or '' }}</td>
+{% if user.Role == 'Admin' %}<td>{% if c.RentingNow %}<span class="mute" title="Complete or cancel their booking first">Can't delete</span>{% else %}<a class="btn danger sm" href="{{ url_for('delete_customer', customer_id=c.CustomerID) }}">Delete</a>{% endif %}</td>{% endif %}</tr>{% endfor %}</table></div>{% endblock %}

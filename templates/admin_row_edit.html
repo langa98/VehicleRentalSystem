@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% from '_fields.html' import field %}{% block title %}Edit {{ table }}{% endblock %}
+{% block body %}
+<p><a href="{{ url_for('admin_table', table=table) }}">← Back to {{ table }}</a></p>
+<h1>Edit row in {{ table }}</h1>
+<div class="card"><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<div class="cols">{% for c in cols if not c.readonly and not c.is_pk %}{{ field(c, table, row) }}{% endfor %}</div>
+<p class="mute">Identity and key columns can't be changed.</p><p><button class="btn">Save changes</button> <a href="{{ url_for('admin_table', table=table) }}">Cancel</a></p></form></div>
+{% endblock %}

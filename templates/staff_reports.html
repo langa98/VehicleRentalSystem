@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Reports{% endblock %}{% block body %}
+<h1>Reports</h1><p class="mute">{{ reports|length }} reports, live from the database. Export any of them as a CSV file (opens in Excel), or print this page.</p>
+{% for r in reports %}<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><b>{{ loop.index }}. {{ r.title }}</b>{% if r.financial %} <span class="pill">Admin only</span>{% endif %}
+<div class="mute">{{ r.why }}</div></div><a class="btn ghost sm" href="{{ url_for('report_csv', key=r.key) }}">Export CSV</a></div>
+<div class="tablewrap"><table><tr>{% for c in r.cols %}<th>{{ c }}</th>{% endfor %}</tr>
+{% for row in r.rows %}<tr>{% for c in r.cols %}<td>{% if row[c] is none %}{% elif c in money_cols %}{{ row[c]|money }}{% elif c.endswith('Percent') %}{{ row[c] }}%{% else %}{{ row[c] }}{% endif %}</td>{% endfor %}</tr>
+{% else %}<tr><td class="mute">No data.</td></tr>{% endfor %}</table></div></div>{% endfor %}{% endblock %}

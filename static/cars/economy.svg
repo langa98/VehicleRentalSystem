@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 230" role="img" aria-label="economy car illustration">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe8dc"/><stop offset="1" stop-color="#eaf5ef"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b6b4f" stop-opacity=".95"/><stop offset="1" stop-color="#0b6b4f"/></linearGradient></defs>
+<rect width="410" height="230" fill="url(#g)"/>
+<ellipse cx="205" cy="182" rx="165" ry="9" fill="#000" opacity=".12"/>
+
+<path d="M40 150 L40 110 Q40 100 52 97 L62 78 Q70 62 100 60 L238 60 Q280 62 304 98 L350 104 Q366 108 366 124 L366 150 Z" fill="url(#b)"/>
+<path d="M96 70 L152 70 L152 94 L80 94 Q86 78 96 70 Z M164 70 L236 70 Q260 72 286 94 L164 94 Z" fill="#e8f1f7" opacity=".92"/>
+<rect x="30" y="140" width="350" height="4" fill="#000" opacity=".12"/>
+
+<circle cx="112" cy="156" r="27" fill="#1d2127"/><circle cx="112" cy="156" r="13" fill="#c9d0d8"/><circle cx="112" cy="156" r="4" fill="#1d2127"/>
+<circle cx="300" cy="156" r="27" fill="#1d2127"/><circle cx="300" cy="156" r="13" fill="#c9d0d8"/><circle cx="300" cy="156" r="4" fill="#1d2127"/>
+<rect x="352" y="116" width="16" height="9" rx="3" fill="#fff6c9"/><rect x="32" y="118" width="12" height="8" rx="3" fill="#e0524a"/>
+</svg>

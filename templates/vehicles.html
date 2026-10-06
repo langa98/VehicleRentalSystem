@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% from '_cars.html' import card %}{% block title %}Vehicles{% endblock %}{% block body %}
+<h1>{{ 'All vehicles' if show_all else 'Available vehicles' }}</h1>
+<form class="card filter" method="get" action="{{ url_for('vehicles') }}" style="margin-bottom:12px">
+<strong>Check availability</strong>
+<input type="hidden" name="all" value="{{ 1 if show_all else 0 }}">
+<label>From <input type="date" name="start" min="{{ today }}" value="{{ start }}" required></label>
+<label>To <input type="date" name="end" min="{{ today }}" value="{{ end }}" required></label>
+<button class="btn sm">Search</button>
+{% if searched %}<a href="{{ url_for('vehicles', all=1 if show_all else 0) }}">Clear</a>{% endif %}
+</form>
+{% if searched %}<p class="mute">Showing vehicles free from {{ start }} to {{ end }}.</p>{% endif %}
+{% if is_staff %}<p><a href="{{ url_for('vehicles', all=0 if show_all else 1) }}">{{ 'Show available only' if show_all else 'Show all' }}</a></p>{% endif %}
+{% for g in groups %}<section class="cat"><div class="cat-head"><h2>{{ g.name }}</h2>
+<span class="mute">{% if g.rate_min == g.rate_max %}{{ g.rate_min|money }}{% else %}{{ g.rate_min|money }} – {{ g.rate_max|money }}{% endif %} per day</span></div>
+<div class="cars">{% for v in g.cars %}{{ card(v, 'staff' if is_staff else 'customer', start, end, days, today, highlight, user.Role == 'Admin') }}{% endfor %}</div></section>
+{% else %}<p class="mute">{{ "No vehicles are free for those dates. Try different dates." if searched else "No vehicles to show." }}</p>{% endfor %}
+{% if highlight %}<script>var el=document.getElementById('car-{{ highlight }}');if(el)el.scrollIntoView({block:'center'});</script>{% endif %}
+{% endblock %}

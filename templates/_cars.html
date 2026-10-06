@@ -1,0 +1,15 @@
+{% macro card(v, mode, start='', end='', days=0, today='', highlight=0, is_admin=False) %}
+<div class="car{{ ' hl' if highlight == v.VehicleID }}" id="car-{{ v.VehicleID }}">
+<div class="art"><img src="{{ car_art(v.CategoryName) }}" alt="{{ v.CategoryName }} car" loading="lazy"></div>
+<div class="info"><h3>{{ v.Make }} {{ v.Model }}</h3>
+<span class="mute">{{ v.Year }} · {{ v.CategoryName }}{% if mode == 'staff' %} · {{ v.RegistrationNo }}{% endif %}</span>
+<div class="rate">{{ v.DailyRate|money }} <small>/ day</small></div>
+{% if days %}<div class="total">{{ days }} day{{ 's' if days != 1 }} · <strong>{{ (v.DailyRate * days)|money }}</strong> in total</div>{% endif %}
+{% if mode == 'staff' %}<div><span class="pill {{ v.Status }}">{{ v.Status }}</span>{% if is_admin and v.Status != 'Rented' %} <a class="btn danger sm" href="{{ url_for('delete_vehicle', vehicle_id=v.VehicleID) }}">Delete</a>{% endif %}</div>
+{% elif mode == 'public' %}<a class="btn" href="{{ url_for('login', next=url_for('vehicles', highlight=v.VehicleID)) }}">Request booking</a>
+{% else %}<form method="post" action="{{ url_for('book', vehicle_id=v.VehicleID) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+{% if start %}<input type="hidden" name="start" value="{{ start }}"><input type="hidden" name="end" value="{{ end }}">
+{% else %}<div class="dates"><label>From<input type="date" name="start" min="{{ today }}" required></label><label>To<input type="date" name="end" min="{{ today }}" required></label></div>{% endif %}
+<button class="btn">Request booking</button></form>{% endif %}
+</div></div>
+{% endmacro %}

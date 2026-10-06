@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block title %}{{ table }}{% endblock %}
+{% from '_fields.html' import field %}
+{% block body %}
+<p><a href="{{ url_for('admin_tables') }}">← All tables</a></p>
+<h1>{{ table }} {% if core %}<span class="pill">system</span>{% endif %}</h1>
+<div class="card"><b>Add a row</b><form method="post" action="{{ url_for('row_add', table=table) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<div class="cols">{% for c in cols if not c.readonly %}{{ field(c, table) }}{% endfor %}</div><p><button class="btn">Add row</button></p></form></div>
+<div class="card tablewrap"><b>Data</b> <span class="mute">(first 500 rows){% if not pk %} · read-only: no single-column key{% endif %}</span>
+<table><tr>{% for c in cols %}<th>{{ c.name }}</th>{% endfor %}{% if pk %}<th></th>{% endif %}</tr>
+{% for r in rows %}<tr>{% for c in cols %}<td>{% if table == 'User' and c.name == 'PasswordHash' %}••••••{% elif r[c.name] is none %}<span class="mute">–</span>{% elif c.kind == 'bit' %}{{ 'Yes' if r[c.name] else 'No' }}{% else %}{{ r[c.name] }}{% endif %}</td>{% endfor %}
+{% if pk %}<td><a class="btn ghost sm" href="{{ url_for('row_edit', table=table, pk=r[pk.name]) }}">Edit</a>
+{% if table == 'Customer' %}<a class="btn danger sm" href="{{ url_for('delete_customer', customer_id=r[pk.name]) }}">Delete</a>{% elif table == 'Vehicle' %}<a class="btn danger sm" href="{{ url_for('delete_vehicle', vehicle_id=r[pk.name]) }}">Delete</a>{% else %}<form class="inline" method="post" action="{{ url_for('row_delete', table=table, pk=r[pk.name]) }}" onsubmit="return confirm('Delete this row?')"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn danger sm">Delete</button></form>{% endif %}</td>{% endif %}</tr>
+{% else %}<tr><td class="mute" colspan="{{ cols|length + 1 }}">No rows yet.</td></tr>{% endfor %}</table></div>
+<div class="card"><b>Columns</b><table><tr><th>Name</th><th>Type</th><th>Required</th><th></th></tr>
+{% for c in cols %}<tr><td>{{ c.name }}{% if c.is_pk %} <span class="pill">key</span>{% endif %}</td><td>{{ c.type }}</td><td>{{ 'No' if c.is_nullable else 'Yes' }}</td>
+<td>{% if not core and not c.is_pk %}<form class="inline" method="post" action="{{ url_for('column_drop', table=table, col=c.name) }}" onsubmit="return confirm('Remove column {{ c.name }} and its data?')"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn ghost sm">Remove</button></form>{% endif %}</td></tr>{% endfor %}</table>
+<form method="post" action="{{ url_for('column_add', table=table) }}" class="inline" style="margin-top:12px"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<input name="col_name" placeholder="New column name" pattern="[A-Za-z][A-Za-z0-9_]*" required><select name="col_type">{% for label in types %}<option>{{ label }}</option>{% endfor %}</select><button class="btn sm">Add column</button></form>
+<p class="mute">New columns are optional so they work on tables that already have rows.</p></div>
+<div class="card"><b>Remove this table</b>
+{% if core %}<p class="mute">This is a system table the website depends on, so it can't be removed from here.</p>
+{% else %}<p class="mute">This permanently deletes the table and all its data. Type its name to confirm.</p>
+<form class="inline" method="post" action="{{ url_for('table_drop', table=table) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input name="confirm" placeholder="{{ table }}" required><button class="btn danger sm">Remove table</button></form>{% endif %}</div>
+{% endblock %}

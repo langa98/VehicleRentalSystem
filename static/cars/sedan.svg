@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 230" role="img" aria-label="sedan car illustration">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dbe6f3"/><stop offset="1" stop-color="#eef3fa"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27508a" stop-opacity=".95"/><stop offset="1" stop-color="#27508a"/></linearGradient></defs>
+<rect width="410" height="230" fill="url(#g)"/>
+<ellipse cx="205" cy="182" rx="165" ry="9" fill="#000" opacity=".12"/>
+
+<path d="M26 150 L26 124 Q26 112 40 109 L112 100 Q140 66 192 64 L248 64 Q292 68 318 100 L360 108 Q376 112 376 126 L376 150 Z" fill="url(#b)"/>
+<path d="M140 100 Q156 76 194 74 L234 74 L234 100 Z M246 74 L262 74 Q290 78 306 100 L246 100 Z" fill="#e8f1f7" opacity=".92"/>
+<rect x="30" y="140" width="350" height="4" fill="#000" opacity=".12"/>
+
+<circle cx="112" cy="156" r="27" fill="#1d2127"/><circle cx="112" cy="156" r="13" fill="#c9d0d8"/><circle cx="112" cy="156" r="4" fill="#1d2127"/>
+<circle cx="300" cy="156" r="27" fill="#1d2127"/><circle cx="300" cy="156" r="13" fill="#c9d0d8"/><circle cx="300" cy="156" r="4" fill="#1d2127"/>
+<rect x="352" y="116" width="16" height="9" rx="3" fill="#fff6c9"/><rect x="32" y="118" width="12" height="8" rx="3" fill="#e0524a"/>
+</svg>

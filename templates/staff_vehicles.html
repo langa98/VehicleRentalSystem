@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Vehicles{% endblock %}{% block body %}
+<h1>Vehicles</h1>
+<div class="card"><b>Add a vehicle</b><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><div class="cols">
+<div><label>Registration</label><input name="reg" required></div><div><label>Make</label><input name="make" required></div><div><label>Model</label><input name="model" required></div>
+<div><label>Year</label><input name="year" type="number" min="1980" max="2100" required></div>
+<div><label>Category</label><select name="category">{% for c in categories %}<option value="{{ c.CategoryID }}">{{ c.CategoryName }} ({{ c.DailyRate|money }}/day)</option>{% endfor %}</select></div>
+<div><label>Status</label><select name="status"><option>Available</option><option>Maintenance</option><option>Rented</option></select></div></div>
+<p><button class="btn">Add vehicle</button></p></form></div>
+<div class="card tablewrap"><table><tr><th>Vehicle</th><th>Year</th><th>Category</th><th>Rate</th><th>Status</th><th>Change status</th>{% if user.Role == 'Admin' %}<th></th>{% endif %}</tr>
+{% for v in vehicles %}<tr><td>{{ v.Make }} {{ v.Model }} <span class="mute">{{ v.RegistrationNo }}</span></td><td>{{ v.Year }}</td><td>{{ v.CategoryName }}</td><td>{{ v.DailyRate|money }}</td><td><span class="pill {{ v.Status }}">{{ v.Status }}</span></td>
+<td><form class="inline" method="post" action="{{ url_for('set_vehicle_status', vehicle_id=v.VehicleID) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<select name="status">{% for s in ['Available','Rented','Maintenance'] %}<option {{ 'selected' if s==v.Status }}>{{ s }}</option>{% endfor %}</select><button class="btn ghost sm">Save</button></form></td>
+{% if user.Role == 'Admin' %}<td>{% if v.Status == 'Rented' %}<span class="mute" title="Complete or cancel the booking first">Rented, can't delete</span>{% else %}<a class="btn danger sm" href="{{ url_for('delete_vehicle', vehicle_id=v.VehicleID) }}">Delete</a>{% endif %}</td>{% endif %}</tr>{% endfor %}</table></div>{% endblock %}

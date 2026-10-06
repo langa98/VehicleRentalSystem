@@ -1,0 +1,11 @@
+{% macro field(c, table, row=none) %}
+{% set v = row[c.name] if row else none %}
+<div><label>{{ c.name }}{% if not c.is_nullable and c.kind != 'bit' %} *{% endif %}</label>
+{% if table == 'User' and c.name == 'PasswordHash' %}<input type="password" name="f_PasswordHash" placeholder="{{ 'leave blank to keep' if row else 'password' }}" {{ '' if row else 'required' }}>
+{% elif c.kind == 'bit' %}<input type="checkbox" name="f_{{ c.name }}" value="1" {{ 'checked' if v }} style="width:auto">
+{% elif c.kind == 'int' %}<input type="number" step="1" name="f_{{ c.name }}" value="{{ v if v is not none }}">
+{% elif c.kind == 'dec' %}<input type="number" step="any" name="f_{{ c.name }}" value="{{ v if v is not none }}">
+{% elif c.kind == 'date' %}<input type="date" name="f_{{ c.name }}" value="{{ v if v is not none }}">
+{% elif c.kind == 'dt' %}<input type="datetime-local" name="f_{{ c.name }}" value="{{ (v|string)[:16].replace(' ','T') if v is not none }}">
+{% else %}<input name="f_{{ c.name }}" value="{{ v if v is not none }}">{% endif %}</div>
+{% endmacro %}

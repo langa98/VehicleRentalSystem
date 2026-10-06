@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Register{% endblock %}{% block body %}
+<div class="card narrow" style="max-width:560px"><h1>Create a customer account</h1>
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<div class="cols"><div><label>First name *</label><input name="first" required></div><div><label>Last name *</label><input name="last" required></div></div>
+<label>ID number (13 digits) *</label><input name="id_number" required maxlength="13" pattern="[0-9]{13}" inputmode="numeric">
+<div class="cols"><div><label>Phone</label><input name="phone"></div><div><label>Driver's licence no.</label><input name="license"></div></div>
+<label>Email *</label><input name="email" type="email" required>
+<div class="cols"><div><label>Username *</label><input name="username" required></div><div><label>Password * (8+ chars)</label><input name="password" type="password" minlength="8" required></div></div>
+<p><button class="btn">Register</button> <a href="{{ url_for('login', next=request.args.get('next')) }}">Back to login</a></p></form></div>{% endblock %}

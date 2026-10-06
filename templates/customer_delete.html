@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Delete customer{% endblock %}{% block body %}
+<p><a href="{{ url_for('staff_customers') }}">← Back to customers</a></p>
+<h1>Delete {{ full_name }}?</h1>
+{% if active %}<div class="card" style="border-left:5px solid var(--err)"><strong>{{ full_name }} can't be deleted right now.</strong>
+<p>They are currently renting:</p><ul>{% for a in active %}<li>{{ a.Make }} {{ a.Model }}, booking #{{ a.BookingID }}, {{ a.StartDate }} to {{ a.EndDate }}</li>{% endfor %}</ul>
+<p class="mute">Complete or cancel that booking first (on the <a href="{{ url_for('staff_bookings') }}">Bookings</a> page), then come back to delete the customer.</p></div>
+{% else %}<div class="card"><p>This permanently deletes the customer <strong>{{ full_name }}</strong> ({{ c.Email }}) and everything linked to them:</p>
+<ul><li><strong>{{ counts.bookings }}</strong> booking(s)</li>
+<li><strong>{{ counts.payments }}</strong> payment(s), {{ counts.paid|money }} in total, which will also disappear from the revenue reports</li>
+<li><strong>{{ counts.logins }}</strong> login account(s)</li></ul>
+<p class="mute">It is all done in one step: if anything goes wrong, nothing is deleted. This cannot be undone.</p>
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>Type <strong>{{ full_name }}</strong> to confirm</label><input name="confirm" autocomplete="off" required style="max-width:340px">
+<p><button class="btn danger">Delete customer and all their records</button> <a href="{{ url_for('staff_customers') }}">Cancel</a></p></form></div>{% endif %}{% endblock %}

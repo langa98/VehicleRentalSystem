@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Drive Mzansi{% endblock %} · Drive Mzansi</title>
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}"><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body class="{% if not user %}guest{% elif not is_staff %}customer{% endif %}"><header><div class="bar"><a class="brand" href="{{ url_for('home') }}" aria-label="Drive Mzansi home"><span class="logo"><svg viewBox="0 0 48 32" aria-hidden="true"><path d="M3 23 L3 17 Q3 14.5 6 14 L13 12.5 Q17 5 24 5 L31 5 Q37 6 40 13 L43 14 Q45 15 45 18 L45 23 Z" fill="#fff"/><circle cx="14" cy="23.5" r="4.6" fill="#241d3a"/><circle cx="35" cy="23.5" r="4.6" fill="#241d3a"/></svg></span><span class="wordmark"><span class="name">Drive <em>Mzansi</em></span><small>Car rental</small></span></a>
+{% if user %}<nav>
+{% if is_staff %}
+<a href="{{ url_for('home') }}">Dashboard</a><a href="{{ url_for('staff_bookings') }}">Bookings</a>
+<a href="{{ url_for('staff_vehicles') }}">Vehicles</a><a href="{{ url_for('staff_customers') }}">Customers</a>
+<a href="{{ url_for('staff_reports') }}">Reports</a>
+{% if user.Role == 'Admin' %}<a href="{{ url_for('admin_tables') }}">Tables</a>{% endif %}
+{% else %}
+<a href="{{ url_for('vehicles') }}">Vehicles</a><a href="{{ url_for('my_bookings') }}">My bookings</a><a href="{{ url_for('my_payments') }}">My payments</a>
+{% endif %}
+<form class="inline" method="post" action="{{ url_for('logout') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<span class="mute">{{ user.Username }} ({{ user.Role }})</span><button class="btn ghost sm">Log out</button></form></nav>{% else %}<nav><a href="{{ url_for('home') }}">Cars</a><a href="{{ url_for('login') }}">Log in</a><a class="btn sm" href="{{ url_for('register') }}">Register</a></nav>{% endif %}
+</div></header>
+<main>{% with msgs = get_flashed_messages(with_categories=true) %}{% for c, m in msgs %}<div class="flash {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
+{% block body %}{% endblock %}</main></body></html>

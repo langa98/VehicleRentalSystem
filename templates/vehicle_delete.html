@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Delete vehicle{% endblock %}{% block body %}
+<p><a href="{{ url_for('staff_vehicles') }}">← Back to vehicles</a></p>
+<h1>Delete {{ name }}?</h1>
+{% if in_use %}<div class="card" style="border-left:5px solid var(--err)"><strong>{{ v.Make }} {{ v.Model }} can't be deleted right now.</strong>
+{% if active %}<p>It is currently rented out:</p><ul>{% for a in active %}<li>Booking #{{ a.BookingID }} for {{ a.FirstName }} {{ a.LastName }}, {{ a.StartDate }} to {{ a.EndDate }}</li>{% endfor %}</ul>
+<p class="mute">Complete or cancel that booking first (on the <a href="{{ url_for('staff_bookings') }}">Bookings</a> page), then come back.</p>
+{% else %}<p>Its status is <strong>Rented</strong>. If it is back, change its status to Available on the <a href="{{ url_for('staff_vehicles') }}">Vehicles</a> page, then come back.</p>{% endif %}</div>
+{% else %}<div class="card"><p>This permanently deletes <strong>{{ name }}</strong> and its booking history:</p>
+<ul><li><strong>{{ counts.bookings }}</strong> booking(s){% if counts.upcoming %}, including <strong>{{ counts.upcoming }} upcoming</strong> that customers are expecting{% endif %}</li>
+<li><strong>{{ counts.payments }}</strong> payment(s), {{ counts.paid|money }} in total, which will also disappear from the revenue reports</li></ul>
+<p class="mute">It is all done in one step: if anything goes wrong, nothing is deleted. This cannot be undone.</p>
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>Type the registration number <strong>{{ v.RegistrationNo }}</strong> to confirm</label><input name="confirm" autocomplete="off" required style="max-width:340px">
+<p><button class="btn danger">Delete vehicle and its history</button> <a href="{{ url_for('staff_vehicles') }}">Cancel</a></p></form></div>{% endif %}{% endblock %}

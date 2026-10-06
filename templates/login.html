@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block title %}Log in{% endblock %}{% block body %}
+<div class="hero"><div><h2>Your next road trip starts here.</h2><p>Browse cars, pick your dates and book in a few clicks.</p></div>
+<div class="card"><h1>Log in</h1>
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>Username</label><input name="username" required autofocus>
+<label>Password</label><input name="password" type="password" required>
+<p><button class="btn">Log in</button></p></form>
+<p class="mute">New customer? <a href="{{ url_for('register', next=request.args.get('next')) }}">Create an account</a></p></div></div>{% endblock %}

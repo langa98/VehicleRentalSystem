@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}Tables{% endblock %}{% block body %}
+<h1>Tables</h1>
+<div class="card tablewrap"><table><tr><th>Table</th><th>Rows</th><th></th></tr>
+{% for t in tables %}<tr><td><a href="{{ url_for('admin_table', table=t.name) }}">{{ t.name }}</a> {% if t.name in core %}<span class="pill">system</span>{% endif %}</td><td>{{ t.row_count }}</td>
+<td><a class="btn ghost sm" href="{{ url_for('admin_table', table=t.name) }}">Open / edit data</a></td></tr>{% endfor %}</table></div>
+<div class="card"><b>Create a new table</b>
+<p class="mute">An ID column is added automatically as the primary key. Add your own columns below; "Link to" columns point at another table.</p>
+<form method="post" action="{{ url_for('create_table') }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<label>Table name</label><input name="table_name" required maxlength="50" pattern="[A-Za-z][A-Za-z0-9_]*" placeholder="e.g. Insurance" style="max-width:320px">
+<div id="cols"></div><p><button type="button" class="btn ghost sm" onclick="addCol()">+ Add column</button></p>
+<p><button class="btn">Create table</button></p></form></div>
+<template id="colrow"><div class="cols" style="align-items:end"><div><label>Column name</label><input name="col_name" pattern="[A-Za-z][A-Za-z0-9_]*" maxlength="50"></div>
+<div><label>Type</label><select name="col_type">{% for label in types %}<option>{{ label }}</option>{% endfor %}{% for t in targets %}<option value="fk:{{ t }}">Link to {{ t }}</option>{% endfor %}</select></div>
+<div><label>Required?</label><select name="col_req"><option value="no">Optional</option><option value="yes">Required</option></select></div></div></template>
+<script>function addCol(){document.getElementById('cols').appendChild(document.getElementById('colrow').content.cloneNode(true))}addCol();addCol();</script>
+{% endblock %}
