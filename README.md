@@ -24,3 +24,13 @@ Connection settings are in `db.py` (Windows authentication to `localhost` by def
 ## Late returns
 A booking is only Completed when staff click Mark returned. After the end date it shows as **Overdue** (dashboard list, bookings page, overdue report, and a warning for the customer), and nobody else can book that car. The late fee is one extra day's rate for each day late, saved when the car is returned and paid like any other balance. The site adds two Booking columns (`ReturnedDate`, `LateFee`) by itself the first time it starts.
 "Run automation now" on the dashboard does the same on demand.
+
+## 🤝 Contributing
+```
+Pull requests are welcome. You may fork the repository and add improvements such as UI, optimizations, or new modules.
+```
+## 📜 License
+```
+This project is provided for educational and personal use. No warranty is expressed or implied.
+```
+
